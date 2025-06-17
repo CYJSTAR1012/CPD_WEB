@@ -59,11 +59,16 @@ st.markdown(f"<div style='font-size:1.15em; margin-bottom:18px;'>추천 컬러/�
 
 if st.button("🌸 실행하기"):
     try:
-        res = requests.post("http://192.168.79.159:5000/trigger", json={"emotion": emotion})
+        res = requests.post(
+            "https://cpd-flask2.onrender.com/trigger",
+            json={"emotion": emotion},
+            timeout=10   # 서버 깨우는 데 오래 걸릴 때 대비, 타임아웃 10초 권장
+        )
         if res.status_code == 200:
             st.success("✅ 서버에 감정 상태가 전달되었습니다.")
             st.info("💡 GIGA 보드가 감정 상태를 요청해서 직접 실행합니다.")
         else:
-            st.error("❌ 실행 실패: 서버 오류")
+            st.error(f"❌ 실행 실패: 서버 오류 (상태코드: {res.status_code})")
+            st.error(res.text)
     except Exception as e:
         st.error(f"❌ 오류 발생: {e}")
